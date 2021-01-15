@@ -107,17 +107,13 @@ class NodeVariableDecl(Node):
         return [self.count_expr] if self.count_expr else []
 
 class NodeVariableAssign(Node):
-    def __init__(self, identifier, node):
-        self.identifier = identifier
+    def __init__(self, identifier_node, node):
+        self.identifier_node = identifier_node
         self.node = node
 
     @property
-    def _value(self):
-        return self.identifier
-
-    @property
     def _children(self):
-        return [self.node]
+        return [self.identifier_node, self.node]
 
 class NodeFuncCall(Node):
     def __init__(self, identifier, arguments):

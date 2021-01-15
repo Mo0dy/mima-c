@@ -19,8 +19,12 @@ int fac(int n) {
 
 int a, b[1];
 
+int add(int a[], int size) {
+    for (int i = 0; i < size; i = i + 1)
+        a[i] = a[i] + 5;
+}
+
 int fibbonachi(int n) {
-    int f[5] = {1, 1 + fibbonachi(5)};
     int a = 0, b = 1;
     for (int i = 0; i < n; i = i + 1) {
         int c = b;
@@ -42,6 +46,10 @@ int main() {
             break;
         printf("{}", fibbonachi(i));
     }
+
+    int a[] = { 1, 2, 3 };
+    add(a, 3);
+    printf("{}", a);
     printf("Done");
     return 0;
 }

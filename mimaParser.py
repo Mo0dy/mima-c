@@ -165,13 +165,14 @@ class AEParser(Parser):
         return n1
 
     def assignment(self) -> Node:
-        # while there is somehting like "a ="
-        if (self._peekType(TokenType.IDENTIFIER) and self._peekType(TokenType.EQUALS, 1)):
-            var_identifier = self._eat(TokenType.IDENTIFIER).value
-            self._eat(TokenType.EQUALS)
-            return NodeVariableAssign(var_identifier, self.assignment())
 
-        return self.p7()
+        node = self.p7()
+
+        if self._peekType(TokenType.ASSIGN):
+            self._eat(TokenType.ASSIGN)
+            return NodeVariableAssign(node, self.assignment())
+
+        return node
 
     # one extra level of recursion so it's easy to extend expr
     def expr(self) -> Node:
@@ -197,8 +198,8 @@ class AEParser(Parser):
         # UnaryNode for declaration with assignment
 
         statements.append(NodeVariableDecl(var_type, var_identifier, count_expr))
-        if self._peekType(TokenType.EQUALS):
-            self._eat(TokenType.EQUALS)
+        if self._peekType(TokenType.ASSIGN):
+            self._eat(TokenType.ASSIGN)
             statements.append(NodeVariableAssign(var_identifier, self.expr()))
 
     def vardecl(self) -> Node:
@@ -340,6 +341,17 @@ class AEParser(Parser):
             node = self.expr()
         self._eat(TokenType.SEMICOLON)
         return node
+    
+    def funcdeclprime(self) -> Node:
+        var_type = self._eat(TokenType.IDENTIFIER).value
+        var_identifier = self._eat(TokenType.IDENTIFIER).value
+
+        if self._peekType(TokenType.LBRACKET):
+            self._eat(TokenType.LBRACKET)
+            self._eat(TokenType.RBRACKET)
+            var_type += '[]'
+
+        return (var_type, var_identifier)
 
     def funcdecl(self) -> Node:
         func_return_type = self._eat(TokenType.IDENTIFIER).value
@@ -351,19 +363,12 @@ class AEParser(Parser):
 
         parameters = []
 
-        if (not self._peekType(TokenType.RPAREN)):
-            var_type = self._eat(TokenType.IDENTIFIER).value
-            var_identifier = self._eat(TokenType.IDENTIFIER).value
-            var_data = (var_type, var_identifier)
-            parameters.append(var_data)
+        if not self._peekType(TokenType.RPAREN):
+            parameters.append(self.funcdeclprime())
 
             while (self._peekType(TokenType.COMMA)):
                 self._eat(TokenType.COMMA)
-
-                var_type = self._eat(TokenType.IDENTIFIER).value
-                var_identifier = self._eat(TokenType.IDENTIFIER).value
-                var_data = (var_type, var_identifier)
-                parameters.append(var_data)
+                parameters.append(self.funcdeclprime())
 
         self._eat(TokenType.RPAREN)
 

@@ -67,8 +67,26 @@ class Interpreter(object):
             self._raise(node, scope, "Variable not declared")
         return var.value
 
+    def walkNodeArrayAccess(self, node: NodeArrayAccess, scope: Scope):
+        index = self.walkNode(node.index_expr, scope)
+        var = scope.translate(node.identifier)
+        if not var or type(var) != tuple:
+            self._raise(node, scope, "Array not defined")
+
+        return var[index]
+    
+    def walkNodeArrayLit(self, node: NodeArrayLit, scope: Scope):
+        values = [self.walkNode(n, scope) for n in node.value_expr_list]
+        return tuple(values)
+    
     def walkNodeVariableDecl(self, node: NodeVariableDecl, scope : Scope):
-        var = Variable(node.type)
+        node_type = node.type
+        if node_type[-1] == ']':
+            # Adding the array size to the node type
+            count = self.walkNode(node.count_expr, scope) if node.count_expr else 0
+            node_type = node_type[:-1] + str(count) + ']'
+
+        var = Variable(node_type)
         # wrapping this wouldn't strictly be neccessary but it keeps things clean
         var_sign = VariableSign(node.identifier)
         scope.addSymbol(var_sign, var)

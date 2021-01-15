@@ -35,20 +35,3 @@ if __name__ == "__main__":
         input = file.read()
     
     genTest(input)
-
-test("int a = 0;", """[Program]: 
-	|->: [Statements]: 
-	|	|->: [VariableDecl] (('int', 'a')): 
-	|	|->: [VariableAssign] (a): 
-	|	|	|->: [Value] ((<Type.INTLITERAL: 0>, '0')): """) 
-
-
-test("""int a() {
-	return 42;
-}""", """[Program]: 
-	|->: [Statements]: 
-	|	|->: [FuncDecl] (('int', 'a', [])): 
-	|	|->: [FuncDef] (('int', 'a', [])): 
-	|	|	|->: [BlockStatements]: 
-	|	|	|	|->: [Return]: 
-	|	|	|	|	|->: [Value] ((<Type.INTLITERAL: 0>, '42')): """) 
