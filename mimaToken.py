@@ -18,7 +18,7 @@ class TokenType(Enum):
     MODULO     = 9
     IDENTIFIER = 10
     SEMICOLON  = 11
-    EQUALS     = 12
+    ASSIGN     = 12
     COMMA      = 13
     LBRACE     = 14
     RBRACE     = 15

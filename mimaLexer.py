@@ -26,7 +26,7 @@ token_regex = {
     TokenType.GT         : r">",
     TokenType.EQUAL      : r"==",
     TokenType.NEQ        : r"<=",
-    TokenType.EQUALS     : r"=",
+    TokenType.ASSIGN     : r"=",
     TokenType.COMMA      : r"\,",
     TokenType.WHILE      : r"while",
     TokenType.FOR        : r"for",
@@ -61,7 +61,7 @@ class Lexer(object):
         parsedtext = self.orig_text[:self.orig_text.index(resttext)]
         newlines = parsedtext.count('\n')
         char = len(parsedtext.split('\n')[-1])
-        return Pos(newlines, char)
+        return Pos(newlines + 1, char + 1)
 
     def tokenStream(self) -> TokenStream:
         text = self.orig_text
